@@ -57,6 +57,15 @@ public class Enemy : MonoBehaviour
 		enabled = false;
 	}
 
+	public void AddPoints(int points) {
+		SumScore.Add(points);
+	}
+
+	public void CheckHighScore () {
+		if (SumScore.Score > SumScore.HighScore)
+			SumScore.SaveHighScore();
+	}
+
 //	void FollowStupid()
 //	{
 //		Vector2 toTarget = playerRef.transform.position	;
@@ -90,27 +99,32 @@ public class Enemy : MonoBehaviour
 
     void OnTriggerEnter2D (Collider2D c)
     {
-//		if (c.tag == "Player")
-//		{
-//			
-//		}
-//
 		if (c.tag == "Boost") 
 		{
-			GetComponent<Rigidbody2D> ().AddForce (new Vector2 (500, 500));
-			transform.Rotate(Vector3.up * Time.deltaTime, Space.World);
+//			GetComponent<Rigidbody2D> ().AddForce (new Vector2 (500, 500));
+			//			transform.Rotate(Vector3.up * Time.deltaTime, Space.World);
+			AddPoints (1);
+			Destroy(gameObject);
 		}
 
 		if (c.tag == "Rainbow")
-        {
-		    soul.Burn(spriteRend);
+		{
+			AddPoints (1);
+			soul.Burn(spriteRend);
         }
 
 		if (c.tag == "MaxBoost") 
 		{
+			AddPoints (1);
 			soul.Explosion();	
   		 	Destroy(gameObject);
 		}
-     }
+    }
+
+	void OnTriggerExit2D(Collider2D c)
+	{
+		if(c.tag == "Boost" || c.tag == "Rainbow"||c.tag == "MaxBoost")
+		CheckHighScore ();
+	}
  }
 

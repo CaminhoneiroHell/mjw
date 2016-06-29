@@ -66,13 +66,13 @@ public class Player : MonoBehaviour
 			jetLaser.SetActive (true);
 			transform.rotation = Quaternion.identity;
 			GetComponent<Rigidbody2D> ().AddForce (new Vector2 (0, boost));
+			ChangeTexture ();
 			if(!chargeJump)
 				boostActive = true;
 		} else {
 				if (Input.GetMouseButtonUp (0)) {
 				//					colRef.isTrigger = true;
 				boostActive = false;
-				ChangeTexture ();
 				jetLaser.SetActive (false);
 				this.gameObject.tag = "Player";
 			}
@@ -174,6 +174,8 @@ public class Player : MonoBehaviour
 		float backgroundY = Mathf.Repeat(Time.time * speed, 1);
 		Vector2 bunnyOffset = new Vector2(0, backgroundY);
 		bgBack.GetComponent<Renderer>().sharedMaterial.SetTextureOffset("_MainTex", bunnyOffset);
+		bgFront.GetComponent<Renderer>().sharedMaterial.SetTextureOffset("_MainTex", bunnyOffset);
+		bgMidle.GetComponent<Renderer>().sharedMaterial.SetTextureOffset("_MainTex", bunnyOffset);
 	}
 
     void Flip()
@@ -183,6 +185,8 @@ public class Player : MonoBehaviour
         theScale.x *= -1;
         spriteRend.transform.localScale = theScale;
     }
+
+
 
     void OnTriggerEnter2D(Collider2D c)
 	{
