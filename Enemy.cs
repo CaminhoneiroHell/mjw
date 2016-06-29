@@ -1,0 +1,116 @@
+﻿using UnityEngine;
+using System.Collections;
+
+public class Enemy : MonoBehaviour
+{
+	#region Utilities
+	public float pesoQueda;
+	public bool follow;
+    Soul soul;
+	public GameObject enemyRef;
+	public GameObject playerRef;
+	Animator anim;
+	public GameObject plataform;
+	public bool facingRight = true;
+	SpriteRenderer spriteRend;
+	public bool Kamizazi;
+	public Collider2D colRef;
+	#endregion
+	
+
+	void Start()
+	{
+		colRef = GetComponent<Collider2D> ();
+		spriteRend = GetComponent<SpriteRenderer> ();
+		pesoQueda = Random.Range (10, 50);
+		anim = GetComponent<Animator> ();
+		soul = GetComponent<Soul> ();
+		enemyRef = this.gameObject;
+		playerRef = GameObject.FindGameObjectWithTag ("Player");
+		if (soul.canShot) {
+			StartCoroutine("ActivateBullets");
+		}
+	}
+
+	void Update()
+	{
+		if(Kamizazi)
+		{
+			anim.SetTrigger ("Jump");
+			transform.Translate (0, -pesoQueda*Time.deltaTime, 0);
+		}
+		
+		if (playerRef != null && gameObject.tag == "Enemy") {
+			float distance = Vector3.Distance (enemyRef.transform.localPosition, playerRef.transform.localPosition);
+			if (distance < 10f) {
+				if (!follow) {
+					Kamizazi = true;
+					colRef.isTrigger = true;
+				} else {
+					colRef.isTrigger = false;
+				}	
+			}
+		}
+	}
+
+	void OnBecameInvisible() {
+		enabled = false;
+	}
+
+//	void FollowStupid()
+//	{
+//		Vector2 toTarget = playerRef.transform.position	;
+//		float speed = 1.5f;
+//		transform.Translate(toTarget * speed * Time.deltaTime);
+//	}
+
+
+	//Shoot business
+//    IEnumerator ActivateBullets ()
+//    {
+//        soul = GetComponent<Soul>();
+//        soul.Move(transform.up * -1);
+//
+//        if (soul.canShot == false)
+//        {
+//            yield break;
+//        }
+//
+//        while (true)
+//        {
+//            for (int i = 0; i < transform.childCount; i++ )
+//            {
+//                Transform shotPosition = transform.GetChild(i);
+//                soul.Shot (shotPosition);
+//                GetComponent<AudioSource>().Play();
+//            }
+//            yield return new WaitForSeconds(soul.shotDelay);
+//        }
+//    }
+
+    void OnTriggerEnter2D (Collider2D c)
+    {
+//		if (c.tag == "Player")
+//		{
+//			
+//		}
+//
+		if (c.tag == "Boost") 
+		{
+			GetComponent<Rigidbody2D> ().AddForce (new Vector2 (500, 500));
+			transform.Rotate(Vector3.up * Time.deltaTime, Space.World);
+		}
+
+		if (c.tag == "Rainbow")
+        {
+		    soul.Burn(spriteRend);
+        }
+
+		if (c.tag == "MaxBoost") 
+		{
+			soul.Explosion();	
+  		 	Destroy(gameObject);
+		}
+     }
+ }
+
