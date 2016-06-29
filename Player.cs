@@ -27,6 +27,7 @@ public class Player : MonoBehaviour
 	SpriteRenderer spriteRend;
 //	public Collider2D colRef;
 	bool chargeJump;
+	private Vector3 mousePosition;
 
 	public void ChangeTexture()
 	{
@@ -52,6 +53,25 @@ public class Player : MonoBehaviour
 //			}
 //	}
 
+	void Update()
+	{
+		if (SumScore.Score > 3) {
+			print ("D");
+		}
+
+		if (SumScore.Score > 4) {
+			print ("C");
+		}
+		if (SumScore.Score > 5) {
+			print ("B");
+		}
+		if (SumScore.Score > 6) {
+			print ("A");
+		}
+		if (SumScore.Score > 7) {
+			print ("S");
+		}
+	}
 
     void FixedUpdate()
 	{
@@ -106,8 +126,8 @@ public class Player : MonoBehaviour
 //          GetComponent<AudioSource>().Play();
             animator.SetBool("flying", true);
 				speed++;
-				if (speed >= 0.3f)
-					speed = 0.3f;
+				if (speed >= 0.5f)
+					speed = 0.5f;
         }
 		else if(!boostActive && !chargeJump)
         {
@@ -191,13 +211,10 @@ public class Player : MonoBehaviour
     void OnTriggerEnter2D(Collider2D c)
 	{
 		soul.EspecialEffect ();
-		if(c.tag == "KillZone")
-		{
-			if (gameObject.tag == "Rainbow") {
-			} else {
-				soul.Explosion ();
-				Destroy (gameObject);
-			}
+
+		if (c.tag == "KillZone") {
+			soul.Explosion ();
+			Destroy (gameObject);
 		}
 
 		if(boostActive == false && this.gameObject.tag == "Player")

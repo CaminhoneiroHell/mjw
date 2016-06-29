@@ -102,8 +102,9 @@ public class Enemy : MonoBehaviour
 		if (c.tag == "Boost") 
 		{
 //			GetComponent<Rigidbody2D> ().AddForce (new Vector2 (500, 500));
-			//			transform.Rotate(Vector3.up * Time.deltaTime, Space.World);
+			//transform.Rotate(Vector3.up * Time.deltaTime, Space.World);
 			AddPoints (1);
+			soul.Explosion();	
 			Destroy(gameObject);
 		}
 
@@ -111,6 +112,7 @@ public class Enemy : MonoBehaviour
 		{
 			AddPoints (1);
 			soul.Burn(spriteRend);
+			GetComponent<Rigidbody2D> ().AddForce (new Vector2 (0,500));
         }
 
 		if (c.tag == "MaxBoost") 
