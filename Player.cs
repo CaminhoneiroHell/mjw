@@ -19,9 +19,11 @@ public class Player : MonoBehaviour
 	public GameObject bgMidle;
 	public GameObject bgFront;
 	public GameObject warning;
+	public AudioSource slowMusic;
+	public AudioSource hardMusic;
 	
 	public Texture2D[] textureList;
-	public int index;
+	private int index;
 	Texture2D atualTexture;
 	bool change;
 	SpriteRenderer spriteRend;
@@ -42,6 +44,8 @@ public class Player : MonoBehaviour
 		soul.Born ();
 		animator = GetComponent<Animator>();
 		spriteRend = GetComponent<SpriteRenderer> ();
+		slowMusic.GetComponent<AudioSource> ();
+		hardMusic.GetComponent<AudioSource> ();
 	}
 
 //	float nextTime = 0;
@@ -53,25 +57,25 @@ public class Player : MonoBehaviour
 //			}
 //	}
 
-	void Update()
-	{
-		if (SumScore.Score > 3) {
-			print ("D");
-		}
-
-		if (SumScore.Score > 4) {
-			print ("C");
-		}
-		if (SumScore.Score > 5) {
-			print ("B");
-		}
-		if (SumScore.Score > 6) {
-			print ("A");
-		}
-		if (SumScore.Score > 7) {
-			print ("S");
-		}
-	}
+//	void Update()
+//	{
+//		if (SumScore.Score > 3) {
+//			print ("D");
+//		}
+//
+//		if (SumScore.Score > 4) {
+//			print ("C");
+//		}
+//		if (SumScore.Score > 5) {
+//			print ("B");
+//		}
+//		if (SumScore.Score > 6) {
+//			print ("A");
+//		}
+//		if (SumScore.Score > 7) {
+//			print ("S");
+//		}
+//	}
 
     void FixedUpdate()
 	{
@@ -90,8 +94,7 @@ public class Player : MonoBehaviour
 			if(!chargeJump)
 				boostActive = true;
 		} else {
-				if (Input.GetMouseButtonUp (0)) {
-				//					colRef.isTrigger = true;
+			if (Input.GetMouseButtonUp (0)) {
 				boostActive = false;
 				jetLaser.SetActive (false);
 				this.gameObject.tag = "Player";
@@ -101,7 +104,6 @@ public class Player : MonoBehaviour
 		if (Input.GetMouseButtonDown (1) && chargeJump == false) {
 			StartCoroutine ("HyperBoost");
 			warning.SetActive (true);
-//			colRef.isTrigger = true;
 		}
 
 		if (Input.GetKeyDown(KeyCode.X)) {
@@ -124,13 +126,17 @@ public class Player : MonoBehaviour
 		if (boostActive && !chargeJump)
 		{
 //          GetComponent<AudioSource>().Play();
+			hardMusic.volume += 0.5f * Time.deltaTime;
+			slowMusic.volume -= 0.5f * Time.deltaTime;
             animator.SetBool("flying", true);
 				speed++;
 				if (speed >= 0.5f)
 					speed = 0.5f;
         }
 		else if(!boostActive && !chargeJump)
-        {
+		{
+			hardMusic.volume -= 0.5f * Time.deltaTime;
+			slowMusic.volume += 0.5f * Time.deltaTime;
             animator.SetBool("flying", false);
 				speed--;
 			if (speed <= 0.1f)
@@ -138,6 +144,8 @@ public class Player : MonoBehaviour
 			this.gameObject.tag = "Player";
 			jetBoost.SetActive (false);
 		}else if (chargeJump && !boostActive){ 
+			hardMusic.volume += 0.5f * Time.deltaTime;
+			slowMusic.volume -= 0.5f * Time.deltaTime;
 			this.gameObject.tag = "MaxBoost";
 			jetBoost.SetActive (true);
 		}
