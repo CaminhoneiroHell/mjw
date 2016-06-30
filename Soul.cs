@@ -30,7 +30,7 @@ public class Soul : MonoBehaviour
 
     public void Shot(Transform origin)
     {
-        Instantiate(bullet, origin.position, origin.rotation);
+		Instantiate(bullet, origin.position, origin.rotation);
     }
 
     public void Move(Vector2 direction)

@@ -4,8 +4,9 @@ using System.Collections;
 public class Enemy : MonoBehaviour
 {
 	#region Utilities
-	public float pesoQueda;
+	float pesoQueda;
 	public bool follow;
+	public Transform shootPosition;
     Soul soul;
 	public GameObject enemyRef;
 	public GameObject playerRef;
@@ -63,7 +64,7 @@ public class Enemy : MonoBehaviour
 
 
 	public void SelfDestruct(){
-		if (transform.position.y <= -20f) {
+		if (transform.position.y <= -20f || transform.position.y >= 30f) {
 			Destroy (this.gameObject);
 		}
 	}
@@ -86,27 +87,27 @@ public class Enemy : MonoBehaviour
 
 
 	//Shoot business
-//    IEnumerator ActivateBullets ()
-//    {
-//        soul = GetComponent<Soul>();
-//        soul.Move(transform.up * -1);
-//
-//        if (soul.canShot == false)
-//        {
-//            yield break;
-//        }
-//
-//        while (true)
-//        {
-//            for (int i = 0; i < transform.childCount; i++ )
-//            {
+    IEnumerator ActivateBullets ()
+    {
+        soul = GetComponent<Soul>();
+        soul.Move(transform.up * -1);
+
+        if (soul.canShot == false)
+        {
+            yield break;
+        }
+
+        while (true)
+        {
+            for (int i = 0; i < transform.childCount; i++ )
+            {
 //                Transform shotPosition = transform.GetChild(i);
-//                soul.Shot (shotPosition);
-//                GetComponent<AudioSource>().Play();
-//            }
-//            yield return new WaitForSeconds(soul.shotDelay);
-//        }
-//    }
+				soul.Shot (shootPosition);
+                GetComponent<AudioSource>().Play();
+            }
+            yield return new WaitForSeconds(soul.shotDelay);
+        }
+    }
 
     void OnTriggerEnter2D (Collider2D c)
     {
