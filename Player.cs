@@ -48,6 +48,25 @@ public class Player : MonoBehaviour
 		hardMusic.GetComponent<AudioSource> ();
 	}
 
+	void Boost()
+	{
+		Camera.main.GetComponent<Camera2DFollow>().PlayShake();
+		this.gameObject.tag = "Boost";
+		jetLaser.SetActive (true);
+		transform.rotation = Quaternion.identity;
+		GetComponent<Rigidbody2D> ().AddForce (new Vector2 (0, boost));
+		ChangeTexture ();
+		if(!chargeJump)
+		boostActive = true;
+	}
+
+	void Fly()
+	{
+		boostActive = false;
+		jetLaser.SetActive (false);
+		this.gameObject.tag = "Player";
+	}
+
 //	float nextTime = 0;
 //	void Update()
 //	{
@@ -77,68 +96,65 @@ public class Player : MonoBehaviour
 //		}
 //	}
 
+	void HyperBoostFinisher()
+	{
+		chargeJump = false;
+		animator.SetTrigger ("break");
+		bgBack.transform.localScale += new Vector3(0,-5000,1);
+	}
+
     void FixedUpdate()
 	{
-		BgMove ();
-		Debug.Log (boostActive);
-//		bgBack.transform.rotation = this.gameObject.transform.rotation;
-//		this.gameObject.transform.rotation = bgBack.gameObject.transform.rotation;
-
+		#region Inputs
 		if (Input.GetMouseButton(0)) {
-			Camera.main.GetComponent<Camera2DFollow>().PlayShake();
-			this.gameObject.tag = "Boost";
-			jetLaser.SetActive (true);
-			transform.rotation = Quaternion.identity;
-			GetComponent<Rigidbody2D> ().AddForce (new Vector2 (0, boost));
-			ChangeTexture ();
-			if(!chargeJump)
-				boostActive = true;
+			Boost ();
 		} else {
-			if (Input.GetMouseButtonUp (0)) {
-				boostActive = false;
-				jetLaser.SetActive (false);
-				this.gameObject.tag = "Player";
-			}
+			Fly ();
 		}
 		
 		if (Input.GetMouseButtonDown (1) && chargeJump == false) {
 			StartCoroutine ("HyperBoost");
-			warning.SetActive (true);
 		}
 
 		if (Input.GetKeyDown(KeyCode.X)) {
-			normalSpace ();
-			chargeJump = false;
-			animator.SetTrigger ("break");
+			HyperBoostFinisher ();
 		}
 
+		#endregion
+
+		BgMove ();
+		Mover ();
+    }
+
+	public void Mover()
+	{
 		#region Comandos movimento
 		float x = Input.GetAxisRaw("Horizontal");
 		Vector2 direction = new Vector2(x, 0).normalized;
 
-        if (x > 0 && !facingRight)
-            Flip();
-        else if (x < 0 && facingRight)
-            Flip();
+		if (x > 0 && !facingRight)
+			Flip();
+		else if (x < 0 && facingRight)
+			Flip();
 
-        soul.Move(direction);
+		soul.Move(direction);
 
 		if (boostActive && !chargeJump)
 		{
-//          GetComponent<AudioSource>().Play();
+			//          GetComponent<AudioSource>().Play();
 			hardMusic.volume += 0.5f * Time.deltaTime;
 			slowMusic.volume -= 0.5f * Time.deltaTime;
-            animator.SetBool("flying", true);
-				speed++;
-				if (speed >= 0.5f)
-					speed = 0.5f;
-        }
+			animator.SetBool("flying", true);
+			speed++;
+			if (speed >= 0.5f)
+				speed = 0.5f;
+		}
 		else if(!boostActive && !chargeJump)
 		{
 			hardMusic.volume -= 0.5f * Time.deltaTime;
 			slowMusic.volume += 0.5f * Time.deltaTime;
-            animator.SetBool("flying", false);
-				speed--;
+			animator.SetBool("flying", false);
+			speed--;
 			if (speed <= 0.1f)
 				speed = 0.1f;
 			this.gameObject.tag = "Player";
@@ -152,30 +168,29 @@ public class Player : MonoBehaviour
 		#endregion
 
 		#region Limita x e y
-        if (transform.position.x <= -18f)
-            transform.position = new Vector3(-18f, transform.position.y, transform.position.z);
-        else if (transform.position.x >= 18f)
-            transform.position = new Vector3(18f, transform.position.y, transform.position.z);
+		if (transform.position.x <= -18f)
+			transform.position = new Vector3(-18f, transform.position.y, transform.position.z);
+		else if (transform.position.x >= 18f)
+			transform.position = new Vector3(18f, transform.position.y, transform.position.z);
 
-        if (transform.position.y <= -7f)
-            transform.position = new Vector3(transform.position.x, -7f, transform.position.z);
-        else if (transform.position.y >= -5f)
-            transform.position = new Vector3(transform.position.x, -5f, transform.position.z);
+		if (transform.position.y <= -7f)
+			transform.position = new Vector3(transform.position.x, -7f, transform.position.z);
+		else if (transform.position.y >= -5f)
+			transform.position = new Vector3(transform.position.x, -5f, transform.position.z);
 		#endregion
-
-		//End Update
-    }
+	}
 
 	public IEnumerator HyperBoost()
 	{
 //		yield return new WaitForSeconds(6.5f); //Tempo Certo
 		yield return new WaitForSeconds(1f); //Tempo Lixo
+		warning.SetActive (true);
 		animator.SetTrigger ("charge");
 		transform.Translate (0, 10, 0);
 		bgFront.SetActive (false);
 		bgMidle.SetActive (false);
 		chargeJump = true;
-		HyperSpace ();
+		bgBack.transform.localScale += new Vector3(0,5000,1);
 		warning.SetActive (false);
     }
 
@@ -185,17 +200,6 @@ public class Player : MonoBehaviour
 //		temp.z = 0f;
 //		transform.rotation = Quaternion.Euler (temp);
 //	}
-
-	public void HyperSpace()
-	{
-		bgBack.transform.localScale += new Vector3(0,5000,1);
-	}
-
-	public void normalSpace()
-	{
-		bgBack.transform.localScale += new Vector3(0,-5000,1);
-//		colRef.isTrigger = false;
-	}
 
 	public void BgMove()
 	{
@@ -213,8 +217,6 @@ public class Player : MonoBehaviour
         theScale.x *= -1;
         spriteRend.transform.localScale = theScale;
     }
-
-
 
     void OnTriggerEnter2D(Collider2D c)
 	{
@@ -239,5 +241,4 @@ public class Player : MonoBehaviour
 			}
         }
 	}
-
 }
