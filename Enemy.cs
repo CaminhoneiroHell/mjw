@@ -32,14 +32,22 @@ public class Enemy : MonoBehaviour
 		}
 	}
 
-	void Update()
-	{
+	void Update(){
+		SelfDestruct ();
+		Kamizaki ();
+	}
+
+//	void OnBecameInvisible() {
+//		print ("MORREU!!!!");
+//	}
+
+	public void Kamizaki(){
 		if(Kamizazi)
 		{
 			anim.SetTrigger ("Jump");
 			transform.Translate (0, -pesoQueda*Time.deltaTime, 0);
 		}
-		
+
 		if (playerRef != null && gameObject.tag == "Enemy") {
 			float distance = Vector3.Distance (enemyRef.transform.localPosition, playerRef.transform.localPosition);
 			if (distance < 10f) {
@@ -53,8 +61,11 @@ public class Enemy : MonoBehaviour
 		}
 	}
 
-	void OnBecameInvisible() {
-		enabled = false;
+
+	public void SelfDestruct(){
+		if (transform.position.y <= -20f) {
+			Destroy (this.gameObject);
+		}
 	}
 
 	public void AddPoints(int points) {

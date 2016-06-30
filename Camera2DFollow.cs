@@ -3,6 +3,7 @@ using System.Collections;
 
 public class Camera2DFollow : MonoBehaviour {
 
+	public GameObject playeRef;
 	public Transform target;
 	public Transform nextTarget;
 	public Transform previousTarget;
@@ -58,7 +59,7 @@ public class Camera2DFollow : MonoBehaviour {
 			lastTargetPosition = target.position;		
 		}
 
-		if (target == null) {
+		if (playeRef == null) {
 			LevelManager ();
 		}
 

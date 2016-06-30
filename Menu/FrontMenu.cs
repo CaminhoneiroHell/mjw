@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Bunny : MonoBehaviour 
+public class FrontMenu : MonoBehaviour 
 {
 	Animator animator;
 	public static bool beginGame;
 	public GameObject menuScene;
 	public GameObject gameScene;
 	public GameObject mainCamera;
+	public GameObject resetScoreBtn;
 
 
 	void Start()
@@ -17,6 +18,7 @@ public class Bunny : MonoBehaviour
 
 	void Update () 
 	{
+		//Event Business
 		if(beginGame)
 		{
 			animator.SetBool("Fly", true);
@@ -27,6 +29,8 @@ public class Bunny : MonoBehaviour
 		{
 			animator.SetBool("Fly", false);
 		}
+
+
 	}
 
 	public void beginGameHelper(bool kfc)
@@ -42,6 +46,10 @@ public class Bunny : MonoBehaviour
 			gameScene.SetActive(true);
 			mainCamera.GetComponent<Camera2DFollow> ().enabled = true;
 			Destroy (menuScene);
+			resetScoreBtn.SetActive (false);
+			Destroy (this);
 		}
 	}
+
+
 }
