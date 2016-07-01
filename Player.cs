@@ -179,7 +179,6 @@ public class Player : MonoBehaviour
 
 		if (boostActive && !activeHyperBoost)
 		{
-			//          GetComponent<AudioSource>().Play();
 			hardMusic.volume += 0.5f * Time.deltaTime;
 			slowMusic.volume -= 0.5f * Time.deltaTime;
 			animator.SetBool("flying", true);
@@ -230,7 +229,7 @@ public class Player : MonoBehaviour
 		activeHyperBoost = true;
 		bgBack.transform.localScale += new Vector3(0,5000,1);
 		warning.SetActive (false);
-		Time.timeScale = 2;
+		Time.timeScale = 2.5f;
 		StartCoroutine ("HyperBoostFinisher");
     }
 
