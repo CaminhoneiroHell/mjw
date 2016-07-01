@@ -12,7 +12,8 @@ public class Player : MonoBehaviour
 	public float speedIncreace = 0.1f;
 	public float speed = 0.1f;
 	public float boost = 10000;
-	
+
+	public GameObject spawnerFollow;	
 	public GameObject jetBoost;
 	public GameObject jetLaser;
 	public GameObject bgBack;
@@ -28,7 +29,7 @@ public class Player : MonoBehaviour
 	Texture2D atualTexture;
 	bool change;
 	SpriteRenderer spriteRend;
-	bool chargeJump;
+	bool activeHyperBoost;
 	private Vector3 mousePosition;
 
 	bool rankCheckerD;
@@ -121,14 +122,15 @@ public class Player : MonoBehaviour
 		jetLaser.SetActive (true);
 		transform.rotation = Quaternion.identity;
 		GetComponent<Rigidbody2D> ().AddForce (new Vector2 (0, boost));
-//		ChangeTexture ();
-		if(!chargeJump)
+		if(!activeHyperBoost)
 		boostActive = true;
 
 		if(rankCheckerD)
 			sparckles.SetActive (true);
 		if(rankCheckerC)
-		ChangeTexture ();
+			ChangeTexture ();
+		if (rankCheckerB)
+			spawnerFollow.SetActive (true);
 	}
 
 	void Fly()
@@ -140,9 +142,10 @@ public class Player : MonoBehaviour
 		bgBack.GetComponent<Renderer> ().material.mainTexture = GetComponent<Renderer> ().material.mainTexture = atualTexture;
 	}
 
-	void HyperBoostFinisher()
+	public IEnumerator HyperBoostFinisher()
 	{
-		chargeJump = false;
+		yield return new WaitForSeconds(30f);
+		activeHyperBoost = false;
 		animator.SetTrigger ("break");
 		bgBack.transform.localScale += new Vector3(0,-5000,1);
 	}
@@ -150,19 +153,10 @@ public class Player : MonoBehaviour
     void FixedUpdate()
 	{
 		#region Inputs
-		if (Input.GetMouseButton(0)) {
+		if (Input.GetMouseButton(0) && activeHyperBoost == false) {
 			Boost ();
 		} else {
 			Fly ();
-		}
-		
-		if (Input.GetMouseButtonDown (1) && chargeJump == false) {
-			warning.SetActive (true);
-			StartCoroutine ("HyperBoost");
-		}
-
-		if (Input.GetKeyDown(KeyCode.X)) {
-			HyperBoostFinisher ();
 		}
 		#endregion
 
@@ -183,7 +177,7 @@ public class Player : MonoBehaviour
 
 		soul.Move(direction);
 
-		if (boostActive && !chargeJump)
+		if (boostActive && !activeHyperBoost)
 		{
 			//          GetComponent<AudioSource>().Play();
 			hardMusic.volume += 0.5f * Time.deltaTime;
@@ -193,7 +187,7 @@ public class Player : MonoBehaviour
 			if (speed >= 0.5f)
 				speed = 0.5f;
 		}
-		else if(!boostActive && !chargeJump)
+		else if(!boostActive && !activeHyperBoost)
 		{
 			hardMusic.volume -= 0.5f * Time.deltaTime;
 			slowMusic.volume += 0.5f * Time.deltaTime;
@@ -203,12 +197,13 @@ public class Player : MonoBehaviour
 				speed = 0.1f;
 			this.gameObject.tag = "Player";
 			jetBoost.SetActive (false);
-		}else if (chargeJump && !boostActive){ 
+		}else if (activeHyperBoost && !boostActive){ 
 			hardMusic.volume += 0.5f * Time.deltaTime;
 			slowMusic.volume -= 0.5f * Time.deltaTime;
 			this.gameObject.tag = "MaxBoost";
 			jetBoost.SetActive (true);
-		}
+		}if(!activeHyperBoost)
+			Time.timeScale = 1;
 		#endregion
 
 		#region Limita x e y
@@ -226,15 +221,17 @@ public class Player : MonoBehaviour
 
 	public IEnumerator HyperBoost()
 	{
-//		yield return new WaitForSeconds(6.5f); //Tempo Certo
-		yield return new WaitForSeconds(1f); //Tempo Lixo
+		yield return new WaitForSeconds(6.2f); //Tempo Certo
+//		yield return new WaitForSeconds(1f); //Tempo Lixo
 		animator.SetTrigger ("charge");
 		transform.Translate (0, 10, 0);
 		bgFront.SetActive (false);
 		bgMidle.SetActive (false);
-		chargeJump = true;
+		activeHyperBoost = true;
 		bgBack.transform.localScale += new Vector3(0,5000,1);
 		warning.SetActive (false);
+		Time.timeScale = 2;
+		StartCoroutine ("HyperBoostFinisher");
     }
 
 	public void BgMove()
@@ -281,5 +278,11 @@ public class Player : MonoBehaviour
 				Destroy (gameObject);
 			}
         }
+
+		if (c.tag == "Carrot" && !activeHyperBoost) {
+			warning.SetActive (true);
+			StartCoroutine ("HyperBoost");
+			Destroy (c.gameObject);
+		}
   	}
 }

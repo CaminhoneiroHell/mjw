@@ -121,6 +121,7 @@ public class Enemy : MonoBehaviour
 
 		if (c.tag == "Rainbow")
 		{
+			GetComponent<AudioSource>().Play();
 			soul.Burn(spriteRend);
 			GetComponent<Rigidbody2D> ().AddForce (new Vector2 (0,500));
         }
