@@ -101,7 +101,6 @@ public class Enemy : MonoBehaviour
         {
             for (int i = 0; i < transform.childCount; i++ )
             {
-//                Transform shotPosition = transform.GetChild(i);
 				soul.Shot (shootPosition);
                 GetComponent<AudioSource>().Play();
             }
@@ -122,7 +121,6 @@ public class Enemy : MonoBehaviour
 
 		if (c.tag == "Rainbow")
 		{
-			AddPoints (1);
 			soul.Burn(spriteRend);
 			GetComponent<Rigidbody2D> ().AddForce (new Vector2 (0,500));
         }

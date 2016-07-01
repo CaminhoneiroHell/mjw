@@ -29,8 +29,6 @@ public class FrontMenu : MonoBehaviour
 		{
 			animator.SetBool("Fly", false);
 		}
-
-
 	}
 
 	public void beginGameHelper(bool kfc)

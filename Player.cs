@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Player : MonoBehaviour
 {
-//    [HideInInspector]
+	#region Variables
     public bool facingRight = true;
     public static bool boostActive;
     Soul soul;
@@ -19,6 +19,7 @@ public class Player : MonoBehaviour
 	public GameObject bgMidle;
 	public GameObject bgFront;
 	public GameObject warning;
+	public GameObject sparckles;
 	public AudioSource slowMusic;
 	public AudioSource hardMusic;
 	
@@ -27,16 +28,38 @@ public class Player : MonoBehaviour
 	Texture2D atualTexture;
 	bool change;
 	SpriteRenderer spriteRend;
-//	public Collider2D colRef;
 	bool chargeJump;
 	private Vector3 mousePosition;
+
+	bool rankCheckerD;
+	bool rankCheckerC;
+	bool rankCheckerB;
+	bool rankCheckerA;
+	bool rankCheckerS;
+	bool rankCheckerSS;
+
+	#endregion
 
 	public void ChangeTexture()
 	{
 		index = Random.Range (0, textureList.Length);
 		atualTexture = textureList [index];
-		bgBack.GetComponent<Renderer>().material.mainTexture = GetComponent<Renderer> ().material.mainTexture = atualTexture;
+		bgBack.GetComponent<Renderer>().material.mainTexture = 
+		GetComponent<Renderer> ().material.mainTexture = atualTexture;
 	}
+
+	public enum Rank
+	{
+		SS,
+		S,
+		A,
+		B,
+		C,
+		D,
+		E
+	}
+
+	public Rank rank;
 
 	void Start()
 	{	
@@ -46,6 +69,49 @@ public class Player : MonoBehaviour
 		spriteRend = GetComponent<SpriteRenderer> ();
 		slowMusic.GetComponent<AudioSource> ();
 		hardMusic.GetComponent<AudioSource> ();
+		AtualizaRank ();
+  	}
+
+	public void AtualizaRank()
+	{
+		if (SumScore.Score > 1)
+			rank = Rank.D;
+		if (SumScore.Score > 3)
+			rank = Rank.C;
+		if (SumScore.Score > 5)
+			rank = Rank.B;
+		if (SumScore.Score > 6)
+			rank = Rank.A;
+		if (SumScore.Score > 7)
+			rank = Rank.S;
+		if (SumScore.Score > 8)
+			rank = Rank.SS;
+		
+		switch(rank)
+		{
+		case Rank.SS:
+			rankCheckerSS = true;
+			Debug.Log("200% PUTAÇO");
+			break;
+		case Rank.S:
+			rankCheckerS = true;
+			break;
+		case Rank.A:
+			rankCheckerA = true;
+			break;
+		case Rank.B:
+			rankCheckerB = true;
+			break;
+		case Rank.C:
+			rankCheckerC = true;
+			break;
+		case Rank.D:
+			rankCheckerD = true;
+			break;
+		case Rank.E:
+			Debug.Log ("Lixo");
+			break;
+		}
 	}
 
 	void Boost()
@@ -55,9 +121,14 @@ public class Player : MonoBehaviour
 		jetLaser.SetActive (true);
 		transform.rotation = Quaternion.identity;
 		GetComponent<Rigidbody2D> ().AddForce (new Vector2 (0, boost));
-		ChangeTexture ();
+//		ChangeTexture ();
 		if(!chargeJump)
 		boostActive = true;
+
+		if(rankCheckerD)
+			sparckles.SetActive (true);
+		if(rankCheckerC)
+		ChangeTexture ();
 	}
 
 	void Fly()
@@ -65,36 +136,9 @@ public class Player : MonoBehaviour
 		boostActive = false;
 		jetLaser.SetActive (false);
 		this.gameObject.tag = "Player";
+		atualTexture = textureList [0];
+		bgBack.GetComponent<Renderer> ().material.mainTexture = GetComponent<Renderer> ().material.mainTexture = atualTexture;
 	}
-
-//	float nextTime = 0;
-//	void Update()
-//	{
-//			if (Time.fixedTime > nextTime) {
-//					nextTime = Time.fixedTime + 5;
-//					print ("Time Up");
-//			}
-//	}
-
-//	void Update()
-//	{
-//		if (SumScore.Score > 3) {
-//			print ("D");
-//		}
-//
-//		if (SumScore.Score > 4) {
-//			print ("C");
-//		}
-//		if (SumScore.Score > 5) {
-//			print ("B");
-//		}
-//		if (SumScore.Score > 6) {
-//			print ("A");
-//		}
-//		if (SumScore.Score > 7) {
-//			print ("S");
-//		}
-//	}
 
 	void HyperBoostFinisher()
 	{
@@ -113,20 +157,20 @@ public class Player : MonoBehaviour
 		}
 		
 		if (Input.GetMouseButtonDown (1) && chargeJump == false) {
+			warning.SetActive (true);
 			StartCoroutine ("HyperBoost");
 		}
 
 		if (Input.GetKeyDown(KeyCode.X)) {
 			HyperBoostFinisher ();
 		}
-
 		#endregion
 
 		BgMove ();
-		Mover ();
+		PlayerMover ();
     }
 
-	public void Mover()
+	public void PlayerMover()
 	{
 		#region Comandos movimento
 		float x = Input.GetAxisRaw("Horizontal");
@@ -184,7 +228,6 @@ public class Player : MonoBehaviour
 	{
 //		yield return new WaitForSeconds(6.5f); //Tempo Certo
 		yield return new WaitForSeconds(1f); //Tempo Lixo
-		warning.SetActive (true);
 		animator.SetTrigger ("charge");
 		transform.Translate (0, 10, 0);
 		bgFront.SetActive (false);
@@ -194,20 +237,16 @@ public class Player : MonoBehaviour
 		warning.SetActive (false);
     }
 
-//	public void NormalizeRotation()
-//	{
-//		Vector3 temp = transform.rotation.eulerAngles;
-//		temp.z = 0f;
-//		transform.rotation = Quaternion.Euler (temp);
-//	}
-
 	public void BgMove()
 	{
 		float backgroundY = Mathf.Repeat(Time.time * speed, 1);
 		Vector2 bunnyOffset = new Vector2(0, backgroundY);
+
+		float backgroundY2 = Mathf.Repeat(Time.time * 0.1f, 1);
+		Vector2 bunnyOffset2 = new Vector2(0, backgroundY2);
 		bgBack.GetComponent<Renderer>().sharedMaterial.SetTextureOffset("_MainTex", bunnyOffset);
-		bgFront.GetComponent<Renderer>().sharedMaterial.SetTextureOffset("_MainTex", bunnyOffset);
-		bgMidle.GetComponent<Renderer>().sharedMaterial.SetTextureOffset("_MainTex", bunnyOffset);
+		bgFront.GetComponent<Renderer>().sharedMaterial.SetTextureOffset("_MainTex", bunnyOffset2);
+		bgMidle.GetComponent<Renderer>().sharedMaterial.SetTextureOffset("_MainTex", bunnyOffset2);
 	}
 
     void Flip()
@@ -220,25 +259,27 @@ public class Player : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D c)
 	{
-		soul.EspecialEffect ();
+		AtualizaRank ();
 
 		if (c.tag == "KillZone") {
+			soul.EspecialEffect ();
 			soul.Explosion ();
 			Destroy (gameObject);
 		}
 
 		if(boostActive == false && this.gameObject.tag == "Player")
 		{
-			soul.EspecialEffect ();
 			if (c.tag == "Enemy") {
+				soul.EspecialEffect ();
 				soul.Explosion ();
 				Destroy (gameObject);
 			}
 
 			else if (c.tag == "EnemyFall") {
+				soul.EspecialEffect ();
 				soul.Explosion ();
 				Destroy (gameObject);
 			}
         }
-	}
+  	}
 }
