@@ -23,6 +23,7 @@ public class Player : MonoBehaviour
 	public GameObject sparckles;
 	public AudioSource slowMusic;
 	public AudioSource hardMusic;
+	public AudioSource SpeakMaster;
 	
 	public Texture2D[] textureList;
 	private int index;
@@ -62,6 +63,11 @@ public class Player : MonoBehaviour
 
 	public Rank rank;
 
+	void Awake()
+	{
+		Camera.main.GetComponent<Camera2DFollow> ().WriteHint ();
+	}
+
 	void Start()
 	{	
 		soul = GetComponent<Soul>();
@@ -75,7 +81,7 @@ public class Player : MonoBehaviour
 
 	public void AtualizaRank()
 	{
-		if (SumScore.Score > 1)
+		if (SumScore.Score > 0)
 			rank = Rank.D;
 		if (SumScore.Score > 3)
 			rank = Rank.C;
@@ -92,7 +98,6 @@ public class Player : MonoBehaviour
 		{
 		case Rank.SS:
 			rankCheckerSS = true;
-			Debug.Log("200% PUTAÇO");
 			break;
 		case Rank.S:
 			rankCheckerS = true;
@@ -108,9 +113,9 @@ public class Player : MonoBehaviour
 			break;
 		case Rank.D:
 			rankCheckerD = true;
+			Destroy(Camera.main.GetComponent<Camera2DFollow> ().hintPopup);
 			break;
 		case Rank.E:
-			Debug.Log ("Lixo");
 			break;
 		}
 	}
@@ -127,7 +132,7 @@ public class Player : MonoBehaviour
 
 		if(rankCheckerD)
 			sparckles.SetActive (true);
-		if(rankCheckerC)
+		if(rankCheckerSS)
 			ChangeTexture ();
 		if (rankCheckerB)
 			spawnerFollow.SetActive (true);
@@ -153,7 +158,7 @@ public class Player : MonoBehaviour
     void FixedUpdate()
 	{
 		#region Inputs
-		if (Input.GetMouseButton(0) && activeHyperBoost == false) {
+		if (Input.GetMouseButton(0) || Input.GetKey(KeyCode.JoystickButton0) && activeHyperBoost == false) {
 			Boost ();
 		} else {
 			Fly ();
@@ -216,12 +221,14 @@ public class Player : MonoBehaviour
 		else if (transform.position.y >= -5f)
 			transform.position = new Vector3(transform.position.x, -5f, transform.position.z);
 		#endregion
+
+
+		CheckHighScore ();
 	}
 
 	public IEnumerator HyperBoost()
 	{
-		yield return new WaitForSeconds(6.2f); //Tempo Certo
-//		yield return new WaitForSeconds(1f); //Tempo Lixo
+		yield return new WaitForSeconds(5.5f); //Tempo Certo
 		animator.SetTrigger ("charge");
 		transform.Translate (0, 10, 0);
 		bgFront.SetActive (false);
@@ -253,10 +260,14 @@ public class Player : MonoBehaviour
         spriteRend.transform.localScale = theScale;
     }
 
+	public void CheckHighScore () {
+		if (SumScore.Score > SumScore.HighScore)
+			SumScore.SaveHighScore();
+	}
+
     void OnTriggerEnter2D(Collider2D c)
 	{
 		AtualizaRank ();
-
 		if (c.tag == "KillZone") {
 			soul.EspecialEffect ();
 			soul.Explosion ();

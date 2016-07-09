@@ -73,10 +73,10 @@ public class Enemy : MonoBehaviour
 		SumScore.Add(points);
 	}
 
-	public void CheckHighScore () {
-		if (SumScore.Score > SumScore.HighScore)
-			SumScore.SaveHighScore();
-	}
+//	public void CheckHighScore () {
+//		if (SumScore.Score > SumScore.HighScore)
+//			SumScore.SaveHighScore();
+//	}
 
 //	void FollowStupid()
 //	{
@@ -133,11 +133,5 @@ public class Enemy : MonoBehaviour
   		 	Destroy(gameObject);
 		}
     }
-
-	void OnTriggerExit2D(Collider2D c)
-	{
-		if(c.tag == "Boost" || c.tag == "Rainbow"||c.tag == "MaxBoost")
-		CheckHighScore ();
-	}
  }
 

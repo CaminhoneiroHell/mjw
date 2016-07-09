@@ -5,7 +5,7 @@ public class EventSystemHelperMenu : MonoBehaviour
 {
     void Update()
     {
-		if (Input.GetMouseButton(0))
+		if (Input.anyKey)
 		{
 			HelperHelper(true);
 			Destroy (this);

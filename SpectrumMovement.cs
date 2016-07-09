@@ -7,13 +7,8 @@ public class SpectrumMovement : MonoBehaviour {
 	bool canroutine = true;
 	public int Life = 100;
     Soul soul;
-//	    Player player;
-    // Score Points
     public int points = 100;
 
-	void Start(){
-
-	}
     void Update()
     {
         if (canroutine)
@@ -33,6 +28,7 @@ public class SpectrumMovement : MonoBehaviour {
         }
 
     }
+
 	void OnTriggerEnter2D(Collider2D c)
 	{
         soul = GetComponent<Soul>();
@@ -66,10 +62,8 @@ public class SpectrumMovement : MonoBehaviour {
 
             GameObject.Destroy(c.gameObject);
             soul.Explosion();
-//            Application.LoadLevel(5);
         }
 	}
-
 
 	IEnumerator SpectrumPhases()
 	{
@@ -83,45 +77,3 @@ public class SpectrumMovement : MonoBehaviour {
 		StopCoroutine ("SpectrumPhases");	
 	}
 }
-
-/*
-	void Update ()
-	{
-		if(canroutine)
-		StartCoroutine ("SpectrumPhases");
-
-		if (canmove) { // if spectrum isnt in the '' stopped phase, he can have a velocity
-			GetComponent<Rigidbody2D> ().velocity = vel; // keep his velocity with the VEL values
-			GetComponent<Animator>().SetBool("flying", false);
-			 gameObject.layer = LayerMask.NameToLayer("Meteor");
-		}
-		else{
-			GetComponent<Rigidbody2D> ().velocity = new Vector2 (0, 0);
-			GetComponent<Animator> ().SetBool ("flying", true);
-			 gameObject.layer = LayerMask.NameToLayer("Enemy");
-		}
-
-	}
-*/
-
-/*
-	void Update ()
-	{
-		if(canroutine)
-		StartCoroutine ("SpectrumPhases");
-
-        if (canmove)
-        {
-            GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
-            GetComponent<Animator>().SetBool("flying", true);
-            gameObject.layer = LayerMask.NameToLayer("Enemy");
-		}
-        else
-        {// if spectrum isnt in the '' stopped phase, he can have a velocity
-            GetComponent<Rigidbody2D>().velocity = vel; // keep his velocity with the VEL values
-            GetComponent<Animator>().SetBool("flying", false);
-            gameObject.layer = LayerMask.NameToLayer("Meteor");
-		}
-
-	}
- */

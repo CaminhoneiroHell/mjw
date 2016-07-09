@@ -5,9 +5,9 @@ using System.Collections;
 public class Soul : MonoBehaviour
 {
     public float speed;
-    public float shotDelay;
+	public float shotDelay;
+	public bool canShot;
     public GameObject bullet;
-    public bool canShot;
 	public GameObject effect;
 	public GameObject explosion;
 	public GameObject burning;

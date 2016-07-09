@@ -5,44 +5,6 @@ using System.Collections;
 
 public class Spectro : MonoBehaviour
 {
-    /* Soul Component
-    Soul soul;
-     
-    // Score Points
-    public int points = 100;
-     
-    IEnumerator Begin()
-    {
-        // Get the Soul component
-        soul = GetComponent<Soul>();
-     
-        // Move in the negative direction of the local Y-axis
-        soul.Move(transform.right * -1);
-        // if can shot is false, end coroutine here.
-        if (soul.canShot == false)
-        {
-            yield break;
-        }
-     
-        while (true)
-        {
-            // Get all child elements
-            for (int i = 0; i < transform.childCount; i++)
-            {
-     
-                Transform shotPosition = transform.GetChild(i);
-     
-                //Make the bullet, using the gameobject position / rotation
-                soul.Shot(shotPosition);
-     
-                // Play the shot sound effect
-                GetComponent<AudioSource>().Play();
-     
-            }
-            yield return new WaitForSeconds(soul.shotDelay);
-        }
-    }
-     */
     void Awake()
     {
         GetComponent<AudioSource>().Play();
@@ -50,11 +12,9 @@ public class Spectro : MonoBehaviour
         StartCoroutine("MusicTemp");
         StartCoroutine("MovementTemp");
     }
+
     void OnTriggerEnter2D(Collider2D c)
     {
-
-
-
         // Get the layer name
 //        string layerName = LayerMask.LayerToName(c.gameObject.layer);
 
@@ -65,6 +25,7 @@ public class Spectro : MonoBehaviour
 //        }
 
     }
+
     IEnumerator MusicTemp()
     {
         yield return new WaitForSeconds(17.5f);//Só refazer o tempo na versão final
@@ -72,6 +33,7 @@ public class Spectro : MonoBehaviour
         GetComponent<AudioSource>().Stop();
         GameObject.Destroy(gameObject);
     }
+
     IEnumerator MovementTemp()
     {
         yield return new WaitForSeconds(15f);
