@@ -181,14 +181,6 @@ public class Player : MonoBehaviour
 
 		BgMove ();
 		PlayerMover ();
-
-		if (Input.GetKeyDown (KeyCode.R)) {
-			SpectroEvent ();
-		}
-
-		if (Input.GetKeyDown (KeyCode.T)) {
-			SpectroBattleFinisher ();	
-		}
     }
 
 	#region SpectroMethods
