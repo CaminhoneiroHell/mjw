@@ -8,15 +8,24 @@ public class Spawner : MonoBehaviour
     public GameObject[] wave;
 
     
-    void Start()
-	{
-        InvokeRepeating("Spawn", spawnDelay, spawnTime);
-    }
+//    void Start()
+//	{
+//        InvokeRepeating("Spawn", spawnDelay, spawnTime);
+//    }
 
+	void OnEnable()
+	{
+		InvokeRepeating("Spawn", spawnDelay, spawnTime);
+	}
 
     void Spawn()
     {
 	    int enemyIndex = Random.Range(0, wave.Length);
 	    Instantiate(wave[enemyIndex], transform.position, transform.rotation);
     }
+
+	void OnDisable()
+	{
+		CancelInvoke ();
+	}
 }

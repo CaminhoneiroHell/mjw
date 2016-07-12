@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
 	public float speed = 0.1f;
 	public float boost = 10000;
 
+	public GameObject spawnerSpec;
 	public GameObject spawnerFollow;	
 	public GameObject jetBoost;
 	public GameObject jetLaser;
@@ -21,6 +22,7 @@ public class Player : MonoBehaviour
 	public GameObject bgFront;
 	public GameObject warning;
 	public GameObject sparckles;
+	public GameObject spectroMusic;
 	public AudioSource slowMusic;
 	public AudioSource hardMusic;
 	public AudioSource SpeakMaster;
@@ -40,14 +42,23 @@ public class Player : MonoBehaviour
 	bool rankCheckerS;
 	bool rankCheckerSS;
 
+	public Texture2D specBG3;
+	public Texture2D specBG2;
+	public Texture2D specBG1;
+	public Texture2D frontTexture;
+
+	bool spectroChecker;
+	public GameObject[] enemySpawnersList;
 	#endregion
 
 	public void ChangeTexture()
 	{
-		index = Random.Range (0, textureList.Length);
-		atualTexture = textureList [index];
-		bgBack.GetComponent<Renderer>().material.mainTexture = 
+		if (!spectroChecker) {
+			index = Random.Range (0, textureList.Length);
+			atualTexture = textureList [index];
+			bgBack.GetComponent<Renderer> ().material.mainTexture = 
 		GetComponent<Renderer> ().material.mainTexture = atualTexture;
+		}
 	}
 
 	public enum Rank
@@ -98,6 +109,7 @@ public class Player : MonoBehaviour
 		{
 		case Rank.SS:
 			rankCheckerSS = true;
+			spawnerSpec.SetActive (true);
 			break;
 		case Rank.S:
 			rankCheckerS = true;
@@ -143,8 +155,10 @@ public class Player : MonoBehaviour
 		boostActive = false;
 		jetLaser.SetActive (false);
 		this.gameObject.tag = "Player";
-		atualTexture = textureList [0];
-		bgBack.GetComponent<Renderer> ().material.mainTexture = GetComponent<Renderer> ().material.mainTexture = atualTexture;
+		if (!spectroChecker) {
+			atualTexture = textureList [0];
+			bgBack.GetComponent<Renderer> ().material.mainTexture = GetComponent<Renderer> ().material.mainTexture = atualTexture;
+		}
 	}
 
 	public IEnumerator HyperBoostFinisher()
@@ -167,7 +181,88 @@ public class Player : MonoBehaviour
 
 		BgMove ();
 		PlayerMover ();
+
+		if (Input.GetKeyDown (KeyCode.R)) {
+			SpectroEvent ();
+		}
+
+		if (Input.GetKeyDown (KeyCode.T)) {
+			SpectroBattleFinisher ();	
+		}
     }
+
+	#region SpectroMethods
+	void SpectroEvent()
+	{
+		hardMusic.mute = true;
+		slowMusic.mute = true;
+		bgBack.SetActive (false);
+		bgMidle.SetActive (false);
+		bgFront.SetActive (false);
+
+		GameObject[] enemies = GameObject.FindGameObjectsWithTag ("Enemy");
+		GameObject[] enemiesFalling = GameObject.FindGameObjectsWithTag ("EnemyFall");
+		foreach (GameObject enemie in  enemies) {
+			Destroy (enemie);
+		}
+		foreach (GameObject enemieF in enemiesFalling) {
+			Destroy (enemieF);
+		}
+
+		StartCoroutine ("SpectroBattle");
+	}
+
+	IEnumerator SpectroBattle()
+	{
+		yield return new WaitForSeconds (50f);
+		spectroChecker = true;
+		spectroMusic.SetActive (true);
+		atualTexture = specBG3;
+		bgBack.GetComponent<Renderer>().material.mainTexture = 
+			GetComponent<Renderer> ().material.mainTexture = atualTexture;
+		atualTexture = specBG2;
+		bgMidle.GetComponent<Renderer>().material.mainTexture = 
+			GetComponent<Renderer> ().material.mainTexture = atualTexture;
+		atualTexture = specBG1;
+			bgFront.GetComponent<Renderer> ().material.mainTexture = 
+				GetComponent<Renderer> ().material.mainTexture = atualTexture;	
+			bgFront.transform.localScale += new Vector3 (0, 300, 1);
+
+		bgBack.SetActive (true);
+		bgMidle.SetActive (true);
+		bgFront.SetActive (true);
+
+		GameObject[] spawners = GameObject.FindGameObjectsWithTag ("Spawner");
+		GameObject[] enemies = GameObject.FindGameObjectsWithTag ("Enemy");
+		GameObject[] enemiesFalling = GameObject.FindGameObjectsWithTag ("EnemyFall");
+		foreach (GameObject enemie in  enemies) {
+			Destroy (enemie);
+		}
+		foreach (GameObject enemieF in enemiesFalling) {
+			Destroy (enemieF);
+		}
+		foreach (GameObject spawn in spawners) {
+			spawn.SetActive (false);
+		}
+	}
+
+	public void SpectroBattleFinisher()
+	{
+		hardMusic.mute = false;
+		slowMusic.mute = false;
+		spectroChecker = false;
+		spectroMusic.SetActive (false);
+		GameObject[] spawners = GameObject.FindGameObjectsWithTag ("Spawner");
+		foreach (GameObject spawn in enemySpawnersList) {
+			spawn.SetActive (true);
+		}
+
+		bgFront.GetComponent<Renderer>().material.mainTexture = 
+			GetComponent<Renderer> ().material.mainTexture = frontTexture;
+		bgFront.transform.localScale += new Vector3 (0, -300, 1);
+		
+	}
+	#endregion
 
 	public void PlayerMover()
 	{
@@ -269,21 +364,26 @@ public class Player : MonoBehaviour
 	{
 		AtualizaRank ();
 		if (c.tag == "KillZone") {
-			soul.EspecialEffect ();
 			soul.Explosion ();
 			Destroy (gameObject);
+		}
+
+
+		if (c.tag == "DarkRainbow" && !spectroChecker) {
+			if (this.gameObject.tag == "Player" || this.gameObject.tag == "Boost" ||
+			   this.gameObject.tag == "MaxBoost") {
+				SpectroEvent ();
+			}
 		}
 
 		if(boostActive == false && this.gameObject.tag == "Player")
 		{
 			if (c.tag == "Enemy") {
-				soul.EspecialEffect ();
 				soul.Explosion ();
 				Destroy (gameObject);
 			}
 
 			else if (c.tag == "EnemyFall") {
-				soul.EspecialEffect ();
 				soul.Explosion ();
 				Destroy (gameObject);
 			}
@@ -295,4 +395,5 @@ public class Player : MonoBehaviour
 			Destroy (c.gameObject);
 		}
   	}
+
 }
