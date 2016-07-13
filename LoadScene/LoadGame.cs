@@ -8,4 +8,8 @@ public class LoadGame : MonoBehaviour {
 		LoadingScreenManager.LoadScene (1);
 	}
 
+	public void ShutGameDown(){
+		Application.Quit ();
+	}
+
 }

@@ -8,6 +8,7 @@ public class Camera2DFollow : MonoBehaviour {
 	public Text hintPopup;
 	public GameObject playeRef;
 	public GameObject howToPlayRef;
+	public GameObject quitGmBtnRef;
 	public Transform target;
 	public Transform nextTarget;
 	public Transform previousTarget;
@@ -30,6 +31,7 @@ public class Camera2DFollow : MonoBehaviour {
 //		offsetZ = (transform.position - target.position).z;
 		transform.parent = null;
 		howToPlayRef.SetActive (true);
+		quitGmBtnRef.SetActive (false);
 	}
 
 	public void PlayShake() {
@@ -123,5 +125,4 @@ public class Camera2DFollow : MonoBehaviour {
 		hintPopup.text = hintList [index];
 		Destroy (howToPlayRef, 3f);
 	}
-
 }
