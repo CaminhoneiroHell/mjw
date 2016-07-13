@@ -36,10 +36,10 @@ public class Player : MonoBehaviour
 	private Vector3 mousePosition;
 
 	bool rankCheckerD;
-	bool rankCheckerC;
+//	bool rankCheckerC;
 	bool rankCheckerB;
-	bool rankCheckerA;
-	bool rankCheckerS;
+//	bool rankCheckerA;
+//	bool rankCheckerS;
 	bool rankCheckerSS;
 
 	public Texture2D specBG3;
@@ -109,19 +109,18 @@ public class Player : MonoBehaviour
 		{
 		case Rank.SS:
 			rankCheckerSS = true;
-			spawnerSpec.SetActive (true);
 			break;
 		case Rank.S:
-			rankCheckerS = true;
+//			rankCheckerS = true;
 			break;
 		case Rank.A:
-			rankCheckerA = true;
+//			rankCheckerA = true;
 			break;
 		case Rank.B:
 			rankCheckerB = true;
 			break;
 		case Rank.C:
-			rankCheckerC = true;
+//			rankCheckerC = true;
 			break;
 		case Rank.D:
 			rankCheckerD = true;
@@ -159,6 +158,10 @@ public class Player : MonoBehaviour
 			atualTexture = textureList [0];
 			bgBack.GetComponent<Renderer> ().material.mainTexture = GetComponent<Renderer> ().material.mainTexture = atualTexture;
 		}
+
+		if (!spectroChecker && !activeHyperBoost && rankCheckerSS) {
+			spawnerSpec.SetActive (true);
+		}
 	}
 
 	public IEnumerator HyperBoostFinisher()
@@ -192,14 +195,14 @@ public class Player : MonoBehaviour
 		bgMidle.SetActive (false);
 		bgFront.SetActive (false);
 
-		GameObject[] enemies = GameObject.FindGameObjectsWithTag ("Enemy");
-		GameObject[] enemiesFalling = GameObject.FindGameObjectsWithTag ("EnemyFall");
-		foreach (GameObject enemie in  enemies) {
-			Destroy (enemie);
-		}
-		foreach (GameObject enemieF in enemiesFalling) {
-			Destroy (enemieF);
-		}
+//		GameObject[] enemies = GameObject.FindGameObjectsWithTag ("Enemy");
+//		GameObject[] enemiesFalling = GameObject.FindGameObjectsWithTag ("EnemyFall");
+//		foreach (GameObject enemie in  enemies) {
+//			Destroy (enemie);
+//		}
+//		foreach (GameObject enemieF in enemiesFalling) {
+//			Destroy (enemieF);
+//		}
 
 		StartCoroutine ("SpectroBattle");
 	}
@@ -225,14 +228,14 @@ public class Player : MonoBehaviour
 		bgFront.SetActive (true);
 
 		GameObject[] spawners = GameObject.FindGameObjectsWithTag ("Spawner");
-		GameObject[] enemies = GameObject.FindGameObjectsWithTag ("Enemy");
-		GameObject[] enemiesFalling = GameObject.FindGameObjectsWithTag ("EnemyFall");
-		foreach (GameObject enemie in  enemies) {
-			Destroy (enemie);
-		}
-		foreach (GameObject enemieF in enemiesFalling) {
-			Destroy (enemieF);
-		}
+//		GameObject[] enemies = GameObject.FindGameObjectsWithTag ("Enemy");
+//		GameObject[] enemiesFalling = GameObject.FindGameObjectsWithTag ("EnemyFall");
+//		foreach (GameObject enemie in  enemies) {
+//			Destroy (enemie);
+//		}
+//		foreach (GameObject enemieF in enemiesFalling) {
+//			Destroy (enemieF);
+//		}
 		foreach (GameObject spawn in spawners) {
 			spawn.SetActive (false);
 		}
@@ -245,7 +248,7 @@ public class Player : MonoBehaviour
 		spectroChecker = false;
 		spectroMusic.SetActive (false);
 		GameObject[] spawners = GameObject.FindGameObjectsWithTag ("Spawner");
-		foreach (GameObject spawn in enemySpawnersList) {
+		foreach (GameObject spawn in spawners) {
 			spawn.SetActive (true);
 		}
 

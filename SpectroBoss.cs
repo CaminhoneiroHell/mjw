@@ -65,7 +65,7 @@ public class SpectroBoss : MonoBehaviour {
             soul.Explosion();
                 if(Life <= 0 )
                 {
-					AddPoints (1);
+					AddPoints (100);
 					soul.Explosion ();
 				StartCoroutine ("SpecDie");
 				playeRef.GetComponent<Player> ().SpectroBattleFinisher ();

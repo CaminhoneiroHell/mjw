@@ -112,6 +112,7 @@ public class Camera2DFollow : MonoBehaviour {
 	{
 		yield return new WaitForSeconds (1);
 		Application.LoadLevel (Application.loadedLevel);
+//		LoadingScreenManager.LoadScene (1);
 	}
 
 	int index;
