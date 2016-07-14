@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
 	public float speed = 0.1f;
 	public float boost = 10000;
 
+    public GameObject canvansRef;
 	public GameObject spawnerSpec;
 	public GameObject spawnerFollow;	
 	public GameObject jetBoost;
@@ -29,8 +30,8 @@ public class Player : MonoBehaviour
 	
 	public Texture2D[] textureList;
 	private int index;
-	Texture2D atualTexture;
-	bool change;
+    Texture2D atualTexture;
+    bool change;
 	SpriteRenderer spriteRend;
 	bool activeHyperBoost;
 	private Vector3 mousePosition;
@@ -39,7 +40,7 @@ public class Player : MonoBehaviour
 //	bool rankCheckerC;
 	bool rankCheckerB;
 //	bool rankCheckerA;
-//	bool rankCheckerS;
+	bool rankCheckerS;
 	bool rankCheckerSS;
 
 	public Texture2D specBG3;
@@ -80,15 +81,17 @@ public class Player : MonoBehaviour
 	}
 
 	void Start()
-	{	
-		soul = GetComponent<Soul>();
+    {
+        soul = GetComponent<Soul>();
 		soul.Born ();
 		animator = GetComponent<Animator>();
 		spriteRend = GetComponent<SpriteRenderer> ();
 		slowMusic.GetComponent<AudioSource> ();
 		hardMusic.GetComponent<AudioSource> ();
 		AtualizaRank ();
-  	}
+        Camera.main.GetComponent<Camera2DFollow>().PlayShake();
+        Boost();
+    }
 
 	public void AtualizaRank()
 	{
@@ -100,9 +103,9 @@ public class Player : MonoBehaviour
 			rank = Rank.B;
 		if (SumScore.Score > 6)
 			rank = Rank.A;
-		if (SumScore.Score > 7)
+		if (SumScore.Score > 10)
 			rank = Rank.S;
-		if (SumScore.Score > 8)
+		if (SumScore.Score > 20)
 			rank = Rank.SS;
 		
 		switch(rank)
@@ -125,9 +128,10 @@ public class Player : MonoBehaviour
 		case Rank.D:
 			rankCheckerD = true;
 			Destroy(Camera.main.GetComponent<Camera2DFollow> ().hintPopup);
-			break;
+            canvansRef.SetActive(false);
+                break;
 		case Rank.E:
-			break;
+                break;
 		}
 	}
 
@@ -143,8 +147,9 @@ public class Player : MonoBehaviour
 
 		if(rankCheckerD)
 			sparckles.SetActive (true);
-		if(rankCheckerSS)
+		if(rankCheckerS)
 			ChangeTexture ();
+		if(rankCheckerSS)
 		if (rankCheckerB)
 			spawnerFollow.SetActive (true);
 	}
@@ -175,7 +180,8 @@ public class Player : MonoBehaviour
     void FixedUpdate()
 	{
 		#region Inputs
-		if (Input.GetMouseButton(0) || Input.GetKey(KeyCode.JoystickButton0) && activeHyperBoost == false) {
+		if (Input.GetMouseButton(0) || Input.GetKey(KeyCode.JoystickButton0) || Input.GetKey(KeyCode.Space) 
+			&& activeHyperBoost == false) {
 			Boost ();
 		} else {
 			Fly ();
@@ -184,6 +190,9 @@ public class Player : MonoBehaviour
 
 		BgMove ();
 		PlayerMover ();
+
+		if (Input.GetKeyDown (KeyCode.P))
+			spawnerSpec.SetActive (true);
     }
 
 	#region SpectroMethods
@@ -221,13 +230,12 @@ public class Player : MonoBehaviour
 		atualTexture = specBG1;
 			bgFront.GetComponent<Renderer> ().material.mainTexture = 
 				GetComponent<Renderer> ().material.mainTexture = atualTexture;	
-			bgFront.transform.localScale += new Vector3 (0, 300, 1);
+			bgFront.transform.localScale += new Vector3 (0, 280, 1);
 
 		bgBack.SetActive (true);
 		bgMidle.SetActive (true);
 		bgFront.SetActive (true);
 
-		GameObject[] spawners = GameObject.FindGameObjectsWithTag ("Spawner");
 //		GameObject[] enemies = GameObject.FindGameObjectsWithTag ("Enemy");
 //		GameObject[] enemiesFalling = GameObject.FindGameObjectsWithTag ("EnemyFall");
 //		foreach (GameObject enemie in  enemies) {
@@ -236,7 +244,7 @@ public class Player : MonoBehaviour
 //		foreach (GameObject enemieF in enemiesFalling) {
 //			Destroy (enemieF);
 //		}
-		foreach (GameObject spawn in spawners) {
+		foreach (GameObject spawn in enemySpawnersList) {
 			spawn.SetActive (false);
 		}
 	}
@@ -247,14 +255,13 @@ public class Player : MonoBehaviour
 		slowMusic.mute = false;
 		spectroChecker = false;
 		spectroMusic.SetActive (false);
-		GameObject[] spawners = GameObject.FindGameObjectsWithTag ("Spawner");
-		foreach (GameObject spawn in spawners) {
+		foreach (GameObject spawn in enemySpawnersList) {
 			spawn.SetActive (true);
 		}
 
 		bgFront.GetComponent<Renderer>().material.mainTexture = 
 			GetComponent<Renderer> ().material.mainTexture = frontTexture;
-		bgFront.transform.localScale += new Vector3 (0, -300, 1);
+		bgFront.transform.localScale += new Vector3 (0, -280, 1);
 		
 	}
 	#endregion
@@ -294,6 +301,7 @@ public class Player : MonoBehaviour
 		}else if (activeHyperBoost && !boostActive){ 
 			hardMusic.volume += 0.5f * Time.deltaTime;
 			slowMusic.volume -= 0.5f * Time.deltaTime;
+			Time.timeScale = 2;
 			this.gameObject.tag = "MaxBoost";
 			jetBoost.SetActive (true);
 		}if(!activeHyperBoost)
@@ -326,8 +334,8 @@ public class Player : MonoBehaviour
 		activeHyperBoost = true;
 		bgBack.transform.localScale += new Vector3(0,5000,1);
 		warning.SetActive (false);
-		Time.timeScale = 2.5f;
 		StartCoroutine ("HyperBoostFinisher");
+        
     }
 
 	public void BgMove()

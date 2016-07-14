@@ -108,30 +108,35 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter2D (Collider2D c)
+    void OnTriggerEnter2D(Collider2D c)
     {
-		if (c.tag == "Boost") 
-		{
-//			GetComponent<Rigidbody2D> ().AddForce (new Vector2 (500, 500));
-			//transform.Rotate(Vector3.up * Time.deltaTime, Space.World);
-			AddPoints (1);
-			soul.Explosion();	
-			Destroy(gameObject);
-		}
-
-		if (c.tag == "Rainbow")
-		{
-			GetComponent<AudioSource>().Play();
-			soul.Burn(spriteRend);
-			GetComponent<Rigidbody2D> ().AddForce (new Vector2 (0,500));
+        if (c.tag == "Boost")
+        {
+            //			GetComponent<Rigidbody2D> ().AddForce (new Vector2 (500, 500));
+            //transform.Rotate(Vector3.up * Time.deltaTime, Space.World);
+            AddPoints(1);
+            soul.Explosion();
+            Destroy(gameObject);
         }
 
-		if (c.tag == "MaxBoost") 
-		{
-			AddPoints (1);
-			soul.Explosion();	
-  		 	Destroy(gameObject);
-		}
+        if (c.tag == "Rainbow")
+        {
+            GetComponent<AudioSource>().Play();
+            soul.Burn(spriteRend);
+            GetComponent<Rigidbody2D>().AddForce(new Vector2(0, 500));
+        }
+
+        if (c.tag == "MaxBoost")
+        {
+            AddPoints(1);
+            soul.Explosion();
+            Destroy(gameObject);
+        }
+
+        if (c.tag == "KillZone")
+        {
+            Destroy(gameObject);
+        }
     }
  }
 

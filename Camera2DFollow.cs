@@ -39,6 +39,8 @@ public class Camera2DFollow : MonoBehaviour {
 		StartCoroutine("Shake");
 	}
 
+
+
 	public void ChangeTarget()
 	{
 		if (previousTarget = target)
@@ -73,7 +75,12 @@ public class Camera2DFollow : MonoBehaviour {
 		if (playeRef == null) {
 			LevelManager ();
 		}
-	}
+
+        if (Time.frameCount % 30 == 0)
+        {
+            System.GC.Collect();
+        }
+    }
 
 	public float duration = 0.5f;
 	public float magnitude = 0.1f;
